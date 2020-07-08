@@ -7,6 +7,7 @@ import PySimpleGUI as sg
     1-lvl nested window
 """
 
+
 # Design pattern 1 - First window does not remain active
 
 layout = [[ sg.Text('Window 1'),],
