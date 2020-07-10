@@ -20,9 +20,9 @@ buttons = {}
 # ------------------------------------------------------------------ #
 # ---------------- Functions for layout definition ----------------- #
 # ------------------------------------------------------------------ #
-def input_info(lab, inKey):
+def input_info(lab, text_key, in_key):
     # falta meterle key al text
-    return [sg.Text(lab), sg.Input(key=inKey)]
+    return [sg.Text(lab, key=text_key), sg.Input(key=in_key)]
 
 def col(pLayout, pKey):
     return sg.Column(pLayout, size=screen, key=pKey, visible=False)
@@ -36,12 +36,12 @@ menu_def = [['Clientes',['Consultar cartelera::pm1', 'Consultar asientos::pm2', 
                     'Cambiar estado de producción::tm4', 'Incluir agente autorizado::tm5']],
             ['Administrador del sistema', ['Agregar teatro::sm1', 'Agregar administrador teatro::sm2']]]
 
-layout_pf1 = [input_info('Fecha', '-fecha_consulta-')]
+layout_pf1 = [input_info('Fecha', 'abc', '-fecha_consulta-')]
 
-layout_pf2 = [input_info('Título', '-titulo_obra-')]
+layout_pf2 = [input_info('Título', 'def', '-titulo_obra-')]
 
-layout_pf3 = [input_info('Título2', '-titulo_2-'),
-                input_info('Bloque', '-nombre_bloque-')]
+layout_pf3 = [input_info('Título', 'ghi', '-titulo_2-'),
+                input_info('Bloque', 'jkl', '-nombre_bloque-')]
 
 layout_gf1 = [[sg.Text('gf1')]]
 layout_gf2 = [[sg.Text('gf2')]]
@@ -77,6 +77,8 @@ if __name__ == '__main__':
     while True:
         event, values = main_window.read()
         # main_window['-titulo_obra-'].update(event)
+        print(event)
+        print(values)
         if event == None:
             break
         if event in frames.keys():
