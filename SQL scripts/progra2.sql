@@ -56,6 +56,7 @@ CREATE TABLE Administrador_Teatro(
         ON UPDATE CASCADE
 );
 
+
 CREATE TABLE Administrador_Sistema(
 	cedula DECIMAL(9) NOT NULL,
     nombre VARCHAR(80) NOT NULL,
@@ -141,7 +142,7 @@ CREATE TABLE Precio(
 	id_produccion INT NOT NULL,
     nombre_bloque VARCHAR(20) NOT NULL,
     id_teatro INT NOT NULL,
-    precio DECIMAL(5,2) NOT NULL,
+    precio DECIMAL(8,2) NOT NULL,
     
     CONSTRAINT pk_precio PRIMARY KEY(id_produccion, nombre_bloque, id_teatro),
     CONSTRAINT fk_precio_produccion FOREIGN KEY (id_produccion) REFERENCES Produccion(id)
@@ -195,11 +196,19 @@ CREATE TABLE Disponibilidad(
 CREATE TABLE Registro_Ventas(
 	consecutivo INT NOT NULL AUTO_INCREMENT,
 	id_presentacion INT NOT NULL,
-    precio DECIMAL (5,2) NOT NULL,
+    precio DECIMAL (8,2) NOT NULL,
     fecha DATETIME NOT NULL DEFAULT NOW(),
     
     CONSTRAINT pk_registro PRIMARY KEY(consecutivo),
     CONSTRAINT fk_registro_presentcion FOREIGN KEY(id_presentacion) REFERENCES Presentacion(id)
 		ON DELETE RESTRICT
         ON UPDATE CASCADE
+);
+
+CREATE TABLE Registro_Dia(
+	fecha DATE NOT NULL,
+    cantidad INT NOT NULL DEFAULT 0,
+    costo_promedio DECIMAL(8,2),
+    
+    CONSTRAINT pk_reg_dia PRIMARY KEY(fecha)
 );

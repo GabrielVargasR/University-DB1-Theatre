@@ -3,9 +3,9 @@ DELIMITER //
 DROP PROCEDURE IF EXISTS sp_create_precio_bloque//
 CREATE PROCEDURE sp_create_precio_bloque(
 	IN pid_teatro INT,
-    IN ptitulo INT,
+    IN ptitulo VARCHAR(40),
     IN pnombre_bloque VARCHAR (20),
-    IN pprecio DECIMAL(5,2)
+    IN pprecio DECIMAL(8,2)
 )
 
 BEGIN

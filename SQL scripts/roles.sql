@@ -15,12 +15,17 @@ GRANT EXECUTE ON PROCEDURE progra2.sp_trn_registrar_agente TO 'admin_teatro'@'lo
 -- GRANT EXECUTE ON PROCEDURE progra2.sp_create_teatro TO 'admin_sistema'@'localhost';
 GRANT ALL PRIVILEGES ON progra2.* TO 'admin_sistema'@'localhost';
 
-/*
+CREATE USER 'cliente_teatro'@'localhost' IDENTIFIED BY 'cliente123';
+GRANT 'cliente'@'localhost' TO 'cliente_teatro'@'localhost';
+SET DEFAULT ROLE ALL TO 'cliente_teatro'@'localhost';
+
+
 DROP USER IF EXISTS 'juancho'@'localhost';
 CREATE USER 'juancho'@'localhost' IDENTIFIED BY '12';
-GRANT 'admin_sistema'@'localhost' TO 'juancho'@'localhost';
+GRANT 'agente_teatro'@'localhost' TO 'juancho'@'localhost';
 SET DEFAULT ROLE ALL TO 'juancho'@'localhost';
 
+/*
 SHOW GRANTS FOR 'cliente'@'localhost';
 SHOW GRANTS FOR 'juancho'@'localhost';
 SELECT USER, HOST FROM mysql.user;

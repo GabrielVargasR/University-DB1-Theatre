@@ -4,6 +4,7 @@ DROP PROCEDURE IF EXISTS sp_trn_registrar_admin_teatro//
 CREATE PROCEDURE sp_trn_registrar_admin_teatro(
 	IN pcedula DECIMAL(9),
     IN pnombre VARCHAR(80),
+    IN pteatro VARCHAR(80),
     IN pfecha_nacimiento DATE,
     IN psexo VARCHAR(1),
     IN pdireccion VARCHAR(100),
@@ -16,12 +17,21 @@ CREATE PROCEDURE sp_trn_registrar_admin_teatro(
 )
 
 BEGIN
+	DECLARE teatro INT;
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION
 		BEGIN
 			ROLLBACK;
 		END;
         
 	START TRANSACTION;
+    
+		SELECT t.id
+			INTO teatro
+			FROM Teatro as t
+			WHERE t.nombre = pteatro;
+            
+		INSERT INTO Administrador_Teatro(cedula, nombre, id_teatro, fecha_nacimiento, sexo, direccion, tel_casa, celular, otro_tel, email, username, passw)
+        VALUES(pcedula, pnombre, teatro, pfecha_nacimiento, psexo, pdireccion, ptel_casa, pcelular, potro_tel, pemail, pusername, ppassw);
     
 		SET @sqlcmd = CONCAT('CREATE USER ''', pusername, '''@''', 'localhost', '''IDENTIFIED BY ''', ppassw, ''';');
 		PREPARE createUser FROM @sqlcmd;
@@ -37,9 +47,7 @@ BEGIN
         PREPARE setRole FROM @defrole;
         EXECUTE setRole;
         DEALLOCATE PREPARE setRole;
-        
-		INSERT INTO Administrador_Sistema(cedula, nombre, fecha_nacimiento, sexo, direccion, tel_casa, celular, otro_tel, email, username, passw)
-        VALUES(pcedula, pnombre, pfecha_nacimiento, psexo, pdireccion, ptel_casa, pcelular, potro_tel, pemail, pussername, ppassw);
+		
     COMMIT;
 END //
 DELIMITER ;

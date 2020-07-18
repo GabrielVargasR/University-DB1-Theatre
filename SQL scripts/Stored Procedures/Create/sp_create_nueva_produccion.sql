@@ -10,7 +10,14 @@ CREATE PROCEDURE sp_create_nueva_produccion(
 )
 
 BEGIN
-	INSERT INTO Produccion(id_teatro, titulo, descripcion, tipo) VALUES(pid_teatro, ptitulo, pdescripcion, ptipo);
+	DECLARE tipo INT;
+    
+    SELECT t.id
+    INTO tipo
+    FROM Tipo_Produccion AS t
+    WHERE t.tipo = ptipo;
+    
+	INSERT INTO Produccion(id_teatro, titulo, descripcion, tipo) VALUES(pid_teatro, ptitulo, pdescripcion, tipo);
 END //
 
 DELIMITER ;

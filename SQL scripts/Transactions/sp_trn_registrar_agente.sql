@@ -24,6 +24,9 @@ BEGIN
         
 	START TRANSACTION;
     
+		INSERT INTO Agente_Teatro(cedula, nombre, fecha_nacimiento, sexo, direccion, tel_casa, celular, otro_tel, email, username, passw, id_teatro)
+        VALUES(pcedula, pnombre, pfecha_nacimiento, psexo, pdireccion, ptel_casa, pcelular, potro_tel, pemail, pusername, ppassw, pid_teatro);
+    
 		SET @sqlcmd = CONCAT('CREATE USER ''', pusername, '''@''', 'localhost', '''IDENTIFIED BY ''', ppassw, ''';');
 		PREPARE createUser FROM @sqlcmd;
 		EXECUTE createUser;
@@ -38,9 +41,7 @@ BEGIN
         PREPARE setRole FROM @defrole;
         EXECUTE setRole;
         DEALLOCATE PREPARE setRole;
-        
-        INSERT INTO Agente_Teatro(cedula, nombre, fecha_nacimiento, sexo, direccion, tel_casa, celular, otro_tel, email, username, passw, id_teatro)
-        VALUES(pcedula, pnombre, pfecha_nacimiento, psexo, pdireccion, ptel_casa, pcelular, potro_tel, pemail, pussername, ppassw, pid_teatro);
+
     COMMIT;
 END //
 DELIMITER ;

@@ -11,7 +11,7 @@ CREATE PROCEDURE sp_create_asientos(
 BEGIN
 	DECLARE counter INT DEFAULT 0;
     
-    WHILE counter <= pcantidad_asientos DO
+    WHILE counter < pcantidad_asientos DO
 		SET counter = counter + 1;
 		INSERT INTO Asiento(numero, fila, teatro, bloque) VALUES (counter, pletra_fila, pid_teatro, pnombre_bloque);
     END WHILE;

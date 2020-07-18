@@ -6,13 +6,12 @@ CREATE PROCEDURE sp_create_bloque(
 )
 
 BEGIN
--- PUEDE QUE PUEDA QUITAR EL SELECT Y METER DIRECTO EL ID
 	DECLARE id_teatro INT;
     
     SELECT t.id
     INTO id_teatro
     FROM Teatro as t
-    WHERE t.nombre = pnombre_bloque;
+    WHERE t.nombre = pnombre_teatro;
     
     INSERT INTO Bloque(nombre, id_teatro) VALUES (pnombre_bloque, id_teatro);
 END //
