@@ -8,25 +8,23 @@ CREATE PROCEDURE sp_create_disponibles(
 
 BEGIN
 	DECLARE asiento INT;
-	DECLARE hayAsientos INT DEFAULT TRUE;
+	DECLARE hayAsientos INT DEFAULT 1;
 
 	DECLARE cur_asientos CURSOR FOR 
 		SELECT a.id
         FROM Asiento AS a
         WHERE a.teatro = pid_teatro;
 	
-    DECLARE CONTINUE HANDLER FOR NOT FOUND SET hayAsientos = FALSE;
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET hayAsientos = 0;
     
     OPEN cur_asientos;
     
+
     FETCH cur_asientos INTO asiento;
-    IF (hayAsiento) THEN
-		INSERT INTO Disponibilidad(id_asiento, id_presentacion, disponible) VALUES (asiento, pid_presenntacion, 1);
-	END IF;
     
-    WHILE (hayAsiento) DO
-		FETCH cur_asientos INTO asiento;
-        INSERT INTO Disponibilidad(id_asiento, id_presentacion, disponible) VALUES (asiento, pid_presenntacion, 1);
+    WHILE (hayAsientos) DO
+        INSERT INTO Disponibilidad(id_asiento, id_presentacion, disponible) VALUES (asiento, pid_presentacion, 1);
+        FETCH cur_asientos INTO asiento;
 	END WHILE;
     
     CLOSE cur_asientos;

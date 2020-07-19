@@ -3,6 +3,7 @@ import db_funcs.fclient as dbc
 import db_funcs.fadmin_teatro as dbt 
 import db_funcs.fadmin_sys as dbs 
 import db_funcs.login as val
+import sys
 
 #                                                                    #                                 |    Público     |  'p..'
 # ------------------------------------------------------------------ #                                 | Agente teatro  |  'g..'
@@ -105,7 +106,7 @@ layout_gf3 = [input_info('Título', 'gttl2', 'gttl2e'),
 
 # ------------------------------ Layouts admin. teatro ------------------------------ #
 layout_tf1 = [input_info('Título', 'ttl1', 'ttl1e'),
-              input_info('Tipo', 'ttip', 'ttipe'),
+              [sg.Text('Tipo', key='ttip'), sg.Combo(['Teatro', 'Danza', 'Música', 'Otro'], key='ttipe')],
               input_info('Descripción', 'tdes', 'tdese') + [sg.Button('Crear Producción', key='tb1')]]
 
 layout_tf2 = [input_info('Título', 'ttl2', 'ttl2e'),
@@ -116,7 +117,7 @@ layout_tf3 = [input_info('Título', 'ttl3', 'ttl3e'),
               input_info('Precio', 'tpr', 'tpre') + [sg.Button('Definir Precio', key='tb3')]]
 
 layout_tf4 = [input_info('Título','ttl4', 'ttl4e'),
-              input_info('Estado', 'tes', 'tese') + [sg.Button('Cambiar estado Presentación', key='tb4')]]
+              [sg.Text('Estado', key='tes'), sg.Combo(['Confidencial', 'Adelantada', 'Anunciada', 'Abierta', 'Cancelada', 'Concluida'], key='tese'), sg.Button('Cambiar estado Presentación', key='tb4')]]
 
 layout_tf5 = [input_info('Nombre', 'tnom', 'tnome'),
               input_info('Cedula', 'tced', 'tcede'),
@@ -178,6 +179,7 @@ main_window = sg.Window("", layout, size=screen, font=my_font)
 # -------------------------- Main method --------------------------  #
 # ------------------------------------------------------------------ #
 if __name__ == '__main__':
+    sys.dont_write_bytecode = True
     while True:
         event, values = main_window.read()
         if event == None:

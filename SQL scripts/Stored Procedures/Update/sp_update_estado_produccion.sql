@@ -3,7 +3,7 @@ DELIMITER //
 DROP PROCEDURE IF EXISTS sp_update_estado_produccion//
 CREATE PROCEDURE sp_update_estado_produccion(
 	IN pid_teatro INT,
-    IN ptitulo INT,
+    IN ptitulo VARCHAR(40),
     IN estado VARCHAR(30)
 )
 
@@ -22,7 +22,7 @@ BEGIN
     WHERE e.estado = estado;
     
     IF (id_estado != 0) THEN
-		INSERT INTO Produccion(estado) VALUES(id_estado);
+        UPDATE Produccion SET estado = id_estado WHERE id = id_produccion;
 	END IF;
 END //
 DELIMITER ;

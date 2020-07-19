@@ -20,7 +20,7 @@ BEGIN
           p.id = d.id_presentacion AND
           pro.estado = 4
     GROUP BY a.fila, a.numero
-    ORDER BY a.numero;
+    ORDER BY a.fila, a.numero;
 END //
 
 DELIMITER ;

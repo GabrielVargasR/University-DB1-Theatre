@@ -1,4 +1,7 @@
 import mysql.connector as sql_conn
+import sys
+
+sys.dont_write_bytecode = True
 
 def validate_login(user, passw):
     try:

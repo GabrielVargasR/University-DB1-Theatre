@@ -10,15 +10,15 @@ RETURNS VARCHAR(255) DETERMINISTIC
 BEGIN
 	DECLARE precios VARCHAR(255);
     DECLARE nombre VARCHAR(20);
-    DECLARE precio DECIMAL (5,2);
-    DECLARE hay_bloque INT DEFAULT FALSE;
+    DECLARE precio DECIMAL (8,2);
+    DECLARE hay_bloque INT DEFAULT 1;
     
     DECLARE cur_precios CURSOR FOR
 		SELECT p.nombre_bloque, p.precio
         FROM Precio AS p
         WHERE p.id_produccion = pid_produccion AND p.id_teatro = pid_teatro;
         
-	DECLARE CONTINUE HANDLER FOR NOT FOUND SET hay_bloque = TRUE;
+	DECLARE CONTINUE HANDLER FOR NOT FOUND SET hay_bloque = 0;
     
     OPEN cur_precios;
     
