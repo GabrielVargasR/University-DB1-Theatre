@@ -196,7 +196,9 @@ CREATE TABLE Disponibilidad(
 CREATE TABLE Registro_Ventas(
 	consecutivo INT NOT NULL AUTO_INCREMENT,
 	id_presentacion INT NOT NULL,
-    precio DECIMAL (8,2) NOT NULL,
+    nombre_cliente VARCHAR(100) NOT NULL,
+    monto DECIMAL(10,2) NOT NULL,
+    num_validacion DECIMAL(6,0) DEFAULT 0, -- indica monto en efectivo
     fecha DATETIME NOT NULL DEFAULT NOW(),
     
     CONSTRAINT pk_registro PRIMARY KEY(consecutivo),

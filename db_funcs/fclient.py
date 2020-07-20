@@ -1,9 +1,28 @@
 import PySimpleGUI as sg
 import mysql.connector as sql_conn
 from decimal import Decimal
+from math import floor
+from random import randint
+from datetime import datetime
 import sys
 
 sys.dont_write_bytecode = True
+
+
+def get_teatro(usr):
+    db = sql_conn.connect(user = 'root', password = 'vmDTNoK1&b', host = 'localhost', database = 'progra2')
+    cursor = db.cursor()
+    try:
+        results = cursor.callproc('sp_read_teatro_usuario', [usr,1,0])
+        result = results[2]
+
+        cursor.close()
+        db.close()
+        return result
+
+    except (sql_conn.Error) as e:
+        print(e)
+
 
 def print_cartelera(cartelera):
     headings = ['Título', 'Teatro', 'Fecha', 'Hora', 'Precios']
@@ -45,19 +64,44 @@ def print_asientos(asientos):
     sg.popup(str_asientos)
 
 
-def get_teatro(usr):
-    db = sql_conn.connect(user = 'root', password = 'vmDTNoK1&b', host = 'localhost', database = 'progra2')
-    cursor = db.cursor()
-    try:
-        results = cursor.callproc('sp_read_teatro_usuario', [usr,1,0])
-        result = results[2]
+def print_factura(titulo, fecha, bloque, fila, asientos, nombre, monto, codigo, fecha_compra):
+    mensaje = 'Factura\n\n'
+    mensaje += 'Título presentación: ' + titulo + '\n'
+    mensaje += 'Fecha: ' + fecha + '\n'
+    mensaje += 'Bloque: ' + bloque + '\n'
+    mensaje += 'Asientos: '
 
+    for a in asientos:
+        mensaje += str(a) + fila + '  '
+
+    mensaje += 'Nombre cliente: ' + nombre + '\n'
+    mensaje += 'Monto: ' + monto + '\n'
+    mensaje += 'Código de compra: ' + codigo + '\n'
+    mensaje += 'Fecha compra: ' + fecha_compra + '\n'
+
+    sg.popup(mensaje)
+
+
+def get_precio_bloque(titulo, fecha, bloque):
+    try:
+        db = sql_conn.connect(user = 'root', password = 'vmDTNoK1&b', host = 'localhost', database = 'progra2')
+        cursor = db.cursor()
+
+        results = cursor.callproc('sp_read_precio_bloque', [titulo, fecha, bloque, 0])
+        return results[3]
+
+    except(sql_conn.Error) as e:
+        print('Hubo un problema con la conexión')
+    finally:
         cursor.close()
         db.close()
-        return result
 
-    except (sql_conn.Error) as e:
-        print(e)
+
+def validar_transaccion(nombre, num_tarjeta, exp, cvv, monto):
+    if ((cvv+floor(monto)) % 2 != 0):
+        fecha = datetime.today().strftime('%Y-%m-%d %H:%M:%S')
+        return (True, randint(100000, 999999), fecha)
+    return (False)
 
 
 def consultar_cartelera_cliente(values, usr, passw):
@@ -106,8 +150,37 @@ def comprar_entradas_cliente(values, usr, passw):
     fecha = values['pfp2e']
     bloque = values['pbl2e']
     fila = values['pfe']
-    #nums = [int(i) for i in values['pne'].replace(" ", "").split(",")]
-    sg.popup('comprar_entradas_cliente')
+    asientos = [int(i) for i in values['pne'].replace(" ", "").split(",")]
+
+    nombre = values['pnome']
+    tarjeta = values['ptare']
+    expiracion = values['pexte']
+    cvv = values['pcte']
+    monto = get_precio_bloque(titulo, fecha, bloque)
+    total = monto * len(asientos)
+    valid = validar_transaccion(nombre, tarjeta, expiracion, cvv, monto)
+
+    if (valid[0]==False):
+        sg.popup('Su tarjeta fue rechazada')
+        return
+
+    try:
+        db = sql_conn.connect(user = 'cliente_teatro', password = 'cliente123', host = 'localhost', database = 'progra2')
+        cursor = db.cursor()
+
+        cursor.callproc('sp_read_asientos_disponibles', [titulo, fecha, bloque])
+
+        print_factura(titulo, fecha, bloque, fila, asientos, nombre, total, valid[1], valid[2])
+
+    except (sql_conn.Error) as e:
+        if (e.errno == 1292):
+            sg.popup("Formato incorrecto para fecha\naaaa-mm-dd hh:mm:ss")
+        else:
+            print(e)
+    finally:
+        db.commit()
+        cursor.close()
+        db.close()
 
 
 def consultar_cartelera_agente(values, usr, passw):

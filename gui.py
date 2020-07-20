@@ -87,7 +87,11 @@ layout_pf3 = [input_info('Título', 'pttl2', 'pttl2e'),
               input_info('Fecha', 'pfp2', 'pfp2e'),
               input_info('Bloque', 'pbl2', 'pbl2e'),
               input_info('Fila', 'pf', 'pfe'),
-              input_info('Números', 'pn', 'pne') + [sg.Button('Comprar', key='pb3')]]
+              input_info('Números', 'pn', 'pne'),
+              input_info('Nombre', 'pnom', 'pnome'),
+              input_info('Número de tarjeta', 'ptar', 'ptare'),
+              input_info('Fecha expiración tarjeta', 'pext', 'pexte'),
+              input_info('Código tarjeta', 'pct', 'pcte') + [sg.Button('Comprar', key='pb3')]]
 
 # --------------------------------- Layouts agentes --------------------------------- #
 layout_gf1 = [input_info('Fecha inicio', 'gfi', 'gfie'),
@@ -102,6 +106,9 @@ layout_gf3 = [input_info('Título', 'gttl2', 'gttl2e'),
               input_info('Bloque', 'gbl2', 'gbl2e'),
               input_info('Fila', 'gf', 'gfe'),
               input_info('Números', 'gn', 'gne'),
+              input_info('Nombre cliente', 'gnom', 'gnome'),
+              input_info('Número de tarjeta', 'gtar', 'gtare'),
+              input_info('Fecha expiración tarjeta', 'gext', 'gexte'),
               [sg.Text('Forma pago', key='gpg'), sg.Combo(['Efectivo', 'Tarjeta'], key='gpge'), sg.Button('Vender', key='gb3')]]
 
 # ------------------------------ Layouts admin. teatro ------------------------------ #
