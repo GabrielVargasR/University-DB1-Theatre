@@ -11,25 +11,15 @@ GRANT EXECUTE ON PROCEDURE progra2.sp_create_precio_bloque TO 'admin_teatro'@'lo
 GRANT EXECUTE ON PROCEDURE progra2.sp_update_estado_produccion TO 'admin_teatro'@'localhost';
 GRANT EXECUTE ON PROCEDURE progra2.sp_trn_registrar_agente TO 'admin_teatro'@'localhost';
 
-
--- GRANT EXECUTE ON PROCEDURE progra2.sp_trn_registrar_admin_teatro TO 'admin_sistema'@'localhost';
--- GRANT EXECUTE ON PROCEDURE progra2.sp_create_teatro TO 'admin_sistema'@'localhost';
 GRANT ALL PRIVILEGES ON progra2.* TO 'admin_sistema'@'localhost';
 
 CREATE USER 'cliente_teatro'@'localhost' IDENTIFIED BY 'cliente123';
 GRANT 'cliente'@'localhost' TO 'cliente_teatro'@'localhost';
 SET DEFAULT ROLE ALL TO 'cliente_teatro'@'localhost';
 
-
+/*
 DROP USER IF EXISTS 'juancho'@'localhost';
 CREATE USER 'juancho'@'localhost' IDENTIFIED BY '12';
 GRANT 'admin_teatro'@'localhost' TO 'juancho'@'localhost';
 SET DEFAULT ROLE ALL TO 'juancho'@'localhost';
-
-DROP USER IF EXISTS 'gvarg'@'localhost';
-CREATE USER 'gvarg'@'localhost' IDENTIFIED BY '12';
-GRANT 'admin_teatro'@'localhost' TO 'gvarg'@'localhost';
-SET DEFAULT ROLE ALL TO 'gvarg'@'localhost';
-
-SHOW GRANTS FOR 'gvarg'@'localhost';
-SELECT USER, HOST FROM mysql.user;
+*/

@@ -10,6 +10,7 @@ def check_null(num):
         return None
     return Decimal(num)
 
+
 def crear_teatro(values, usr, passw):
     nombre = values['snomt1e']
     telefono = values['stele']
@@ -106,6 +107,8 @@ def registrar_admin_teatro(values, usr, passw):
             sg.popup("Formato incorrecto para fecha\naaaa-mm-dd")
         elif num == 1370:
             sg.popup('Usted no tiene permiso para ejecutar esta funcionalidad')
+        elif num == 1644:
+            sg.popup('La cédula o el usuario ya existe en el sistema')
         else:
             print(e)
     finally:

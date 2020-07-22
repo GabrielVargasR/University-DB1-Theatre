@@ -16,7 +16,15 @@ CREATE TABLE Teatro(
     CONSTRAINT ak_teatro UNIQUE(nombre)
 );
 
-CREATE TABLE Agente_Teatro(
+CREATE TABLE Tipo_Usuario(
+	id INT NOT NULL AUTO_INCREMENT,
+    tipo VARCHAR(30),
+    
+    CONSTRAINT pk_tipo_usuario PRIMARY KEY(id), 
+    CONSTRAINT ak_tipo_usuario UNIQUE(tipo)
+);
+
+CREATE TABLE Usuario (
 	cedula DECIMAL(9) NOT NULL,
     nombre VARCHAR(80) NOT NULL,
     fecha_nacimiento DATE,
@@ -28,50 +36,19 @@ CREATE TABLE Agente_Teatro(
     email VARCHAR(50),
     username VARCHAR(30) NOT NULL, 
     passw VARCHAR(40) NOT NULL,
-    id_teatro INT NOT NULL,
+    id_teatro INT,
+    tipo_usuario INT NOT NULL,
     
-    CONSTRAINT pk_agente_teatro PRIMARY KEY(cedula),
-	CONSTRAINT fk_agente_teatro FOREIGN KEY(id_teatro) REFERENCES Teatro(id)
+    CONSTRAINT pk_usuario PRIMARY KEY(cedula),
+    CONSTRAINT unique_user UNIQUE(username),
+    CONSTRAINT fk_tipo_usuario FOREIGN KEY(tipo_usuario) REFERENCES Tipo_Usuario(id)
+		ON DELETE RESTRICT
+        ON UPDATE RESTRICT,
+	CONSTRAINT fk_usuario_teatro FOREIGN KEY(id_teatro) REFERENCES Teatro(id)
 		ON DELETE CASCADE
         ON UPDATE CASCADE
 );
 
-CREATE TABLE Administrador_Teatro(
-	cedula DECIMAL(9) NOT NULL,
-    nombre VARCHAR(80) NOT NULL,
-    fecha_nacimiento DATE,
-    sexo VARCHAR(1),
-    direccion VARCHAR(100),
-    tel_casa DECIMAL(8),
-    celular DECIMAL(8) NOT NULL,
-    otro_tel DECIMAL(8),
-    email VARCHAR(50),
-    username VARCHAR(30) NOT NULL, 
-    passw VARCHAR(40) NOT NULL, 
-    id_teatro INT NOT NULL,
-    
-    CONSTRAINT pk_admin_teatro PRIMARY KEY(cedula),
-    CONSTRAINT fk_admin_teatro FOREIGN KEY(id_teatro) REFERENCES Teatro(id)
-		ON DELETE CASCADE
-        ON UPDATE CASCADE
-);
-
-
-CREATE TABLE Administrador_Sistema(
-	cedula DECIMAL(9) NOT NULL,
-    nombre VARCHAR(80) NOT NULL,
-    fecha_nacimiento DATE,
-    sexo VARCHAR(1),
-    direccion VARCHAR(100),
-    tel_casa DECIMAL(8),
-    celular DECIMAL(8) NOT NULL,
-    otro_tel DECIMAL(8),
-    email VARCHAR(50),
-    username VARCHAR(30) NOT NULL, 
-    passw VARCHAR(40) NOT NULL, 
-    
-    CONSTRAINT pk_admin_sistema PRIMARY KEY(cedula)
-);
 
 CREATE TABLE Tipo_Produccion(
 	id INT NOT NULL AUTO_INCREMENT,

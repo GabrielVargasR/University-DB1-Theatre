@@ -10,8 +10,8 @@ def get_teatro(usr):
     db = sql_conn.connect(user = 'root', password = 'vmDTNoK1&b', host = 'localhost', database = 'progra2')
     cursor = db.cursor()
     try:
-        results = cursor.callproc('sp_read_teatro_usuario', [usr,0,0])
-        result = results[2]
+        results = cursor.callproc('sp_read_teatro_usuario', [usr,0])
+        result = results[1]
 
         cursor.close()
         db.close()
@@ -107,7 +107,7 @@ def camiar_estado_presentacion(values, usr, passw):
         db = sql_conn.connect(user = usr, password = passw, host = 'localhost', database = 'progra2')
         cursor = db.cursor()
 
-        cursor.callproc('sp_update_estado_produccion', [teatro, titulo, estado])
+        cursor.callproc('sp_update_estado_produccion', [teatro, titulo, estado.lower()])
 
         sg.popup('Estado cambiado con éxito')
     except (sql_conn.Error) as e:
@@ -148,6 +148,8 @@ def registrar_agente(values, usr, passw):
             sg.popup("Formato incorrecto para fecha\naaaa-mm-dd")
         elif num == 1370:
             sg.popup('Usted no tiene permiso para esta funcionalidad')
+        elif num == 1644:
+            sg.popup('La cédula o el usuario ya existe en el sistema')
         print(e)
     finally:
         db.commit()

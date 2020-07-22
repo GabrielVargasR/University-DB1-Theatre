@@ -109,6 +109,7 @@ layout_gf3 = [input_info('Título', 'gttl2', 'gttl2e'),
               input_info('Nombre cliente', 'gnom', 'gnome'),
               input_info('Número de tarjeta', 'gtar', 'gtare'),
               input_info('Fecha expiración tarjeta', 'gext', 'gexte'),
+              input_info('Código tarjeta', 'gct', 'gcte'),
               [sg.Text('Forma pago', key='gpg'), sg.Combo(['Efectivo', 'Tarjeta'], key='gpge'), sg.Button('Vender', key='gb3')]]
 
 # ------------------------------ Layouts admin. teatro ------------------------------ #

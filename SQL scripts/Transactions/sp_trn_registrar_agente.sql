@@ -17,31 +17,19 @@ CREATE PROCEDURE sp_trn_registrar_agente(
 )
 
 BEGIN
-	DECLARE EXIT HANDLER FOR SQLEXCEPTION
-		BEGIN
-			ROLLBACK;
-		END;
+	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
+    BEGIN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Hubo un problema registrando el usuario';
+		ROLLBACK;
+    END;
         
 	START TRANSACTION;
+            
+		INSERT INTO Usuario(cedula, nombre, fecha_nacimiento, sexo, direccion, tel_casa, celular, otro_tel, email, username, passw, id_teatro, tipo_usuario)
+			VALUES(pcedula, pnombre, pfecha_nacimiento, psexo, pdireccion, ptel_casa, pcelular, potro_tel, pemail, pusername, ppassw, pid_teatro, 1);
     
-		INSERT INTO Agente_Teatro(cedula, nombre, fecha_nacimiento, sexo, direccion, tel_casa, celular, otro_tel, email, username, passw, id_teatro)
-        VALUES(pcedula, pnombre, pfecha_nacimiento, psexo, pdireccion, ptel_casa, pcelular, potro_tel, pemail, pusername, ppassw, pid_teatro);
-    
-		SET @sqlcmd = CONCAT('CREATE USER ''', pusername, '''@''', 'localhost', '''IDENTIFIED BY ''', ppassw, ''';');
-		PREPARE createUser FROM @sqlcmd;
-		EXECUTE createUser;
-		DEALLOCATE PREPARE createUser;
-        
-        SET @grantcmd = CONCAT('GRANT agente_teatro@localhost TO ''', pusername, '''@''', 'localhost', ''';');
-        PREPARE grantRole FROM @grantcmd;
-        EXECUTE grantRole;
-        DEALLOCATE PREPARE grantRole;
-        
-        SET @defrole = CONCAT('SET DEFAULT ROLE ALL TO ''', pusername, '''@''', 'localhost', ''';');
-        PREPARE setRole FROM @defrole;
-        EXECUTE setRole;
-        DEALLOCATE PREPARE setRole;
-
+		CALL sp_create_agente_user(pusername, ppassw);
+		
     COMMIT;
 END //
 DELIMITER ;

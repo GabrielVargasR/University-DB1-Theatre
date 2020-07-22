@@ -18,10 +18,12 @@ CREATE PROCEDURE sp_trn_registrar_admin_teatro(
 
 BEGIN
 	DECLARE teatro INT;
-	DECLARE EXIT HANDLER FOR SQLEXCEPTION
-		BEGIN
-			ROLLBACK;
-		END;
+    
+	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
+    BEGIN
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Hubo un problema registrando el usuario';
+		ROLLBACK;
+    END;
         
 	START TRANSACTION;
     
@@ -30,23 +32,10 @@ BEGIN
 			FROM Teatro as t
 			WHERE t.nombre = pteatro;
             
-		INSERT INTO Administrador_Teatro(cedula, nombre, id_teatro, fecha_nacimiento, sexo, direccion, tel_casa, celular, otro_tel, email, username, passw)
-        VALUES(pcedula, pnombre, teatro, pfecha_nacimiento, psexo, pdireccion, ptel_casa, pcelular, potro_tel, pemail, pusername, ppassw);
+		INSERT INTO Usuario(cedula, nombre, id_teatro, fecha_nacimiento, sexo, direccion, tel_casa, celular, otro_tel, email, username, passw, tipo_usuario)
+        VALUES(pcedula, pnombre, teatro, pfecha_nacimiento, psexo, pdireccion, ptel_casa, pcelular, potro_tel, pemail, pusername, ppassw, 2);
     
-		SET @sqlcmd = CONCAT('CREATE USER ''', pusername, '''@''', 'localhost', '''IDENTIFIED BY ''', ppassw, ''';');
-		PREPARE createUser FROM @sqlcmd;
-		EXECUTE createUser;
-		DEALLOCATE PREPARE createUser;
-        
-        SET @grantcmd = CONCAT('GRANT admin_teatro@localhost TO ''', pusername, '''@''', 'localhost', ''';');
-        PREPARE grantRole FROM @grantcmd;
-        EXECUTE grantRole;
-        DEALLOCATE PREPARE grantRole;
-        
-        SET @defrole = CONCAT('SET DEFAULT ROLE ALL TO ''', pusername, '''@''', 'localhost', ''';');
-        PREPARE setRole FROM @defrole;
-        EXECUTE setRole;
-        DEALLOCATE PREPARE setRole;
+		CALL sp_create_admin_user(pusername, ppassw);
 		
     COMMIT;
 END //

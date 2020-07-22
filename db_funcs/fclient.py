@@ -13,8 +13,8 @@ def get_teatro(usr):
     db = sql_conn.connect(user = 'root', password = 'vmDTNoK1&b', host = 'localhost', database = 'progra2')
     cursor = db.cursor()
     try:
-        results = cursor.callproc('sp_read_teatro_usuario', [usr,1,0])
-        result = results[2]
+        results = cursor.callproc('sp_read_teatro_usuario', [usr,0])
+        result = results[1]
 
         cursor.close()
         db.close()
@@ -29,7 +29,7 @@ def print_cartelera(cartelera):
     info = []
 
     for p in cartelera:
-        info.append([p[0], p[1], p[2].strftime('%m/%d/%Y'), p[2].strftime('%H:%M:%S'), p[3]])
+        info.append([p[0], p[1], p[2].strftime('%d/%m/%Y'), p[2].strftime('%H:%M:%S'), p[3]])
 
     if (info == []):
         info = [['-', '-', '-', '-', '-']]
@@ -64,19 +64,23 @@ def print_asientos(asientos):
     sg.popup(str_asientos)
 
 
-def print_factura(titulo, fecha, bloque, fila, asientos, nombre, monto, codigo, fecha_compra):
+def print_factura(titulo, pfecha, bloque, fila, asientos, nombre, monto, codigo, fecha_compra):
+
+    fecha = datetime.strptime(pfecha, '%Y-%m-%d %H:%M:%S')
+
     mensaje = 'Factura\n\n'
     mensaje += 'Título presentación: ' + titulo + '\n'
-    mensaje += 'Fecha: ' + fecha + '\n'
+    mensaje += 'Fecha: ' + fecha.strftime('%d/%m/%Y') + '\n'
+    mensaje += 'Hora: ' + fecha.strftime('%H:%M:%S') + '\n'
     mensaje += 'Bloque: ' + bloque + '\n'
     mensaje += 'Asientos: '
 
     for a in asientos:
         mensaje += str(a) + fila + '  '
 
-    mensaje += 'Nombre cliente: ' + nombre + '\n'
-    mensaje += 'Monto: ' + monto + '\n'
-    mensaje += 'Código de compra: ' + codigo + '\n'
+    mensaje += '\nNombre cliente: ' + nombre + '\n'
+    mensaje += 'Monto: ' + str(monto) + '\n'
+    mensaje += 'Código de compra: ' + str(codigo) + '\n'
     mensaje += 'Fecha compra: ' + fecha_compra + '\n'
 
     sg.popup(mensaje)
@@ -153,9 +157,9 @@ def comprar_entradas_cliente(values, usr, passw):
     asientos = [int(i) for i in values['pne'].replace(" ", "").split(",")]
 
     nombre = values['pnome']
-    tarjeta = values['ptare']
+    tarjeta = int(values['ptare'])
     expiracion = values['pexte']
-    cvv = values['pcte']
+    cvv = int(values['pcte'])
     monto = get_precio_bloque(titulo, fecha, bloque)
     total = monto * len(asientos)
     valid = validar_transaccion(nombre, tarjeta, expiracion, cvv, monto)
@@ -163,20 +167,35 @@ def comprar_entradas_cliente(values, usr, passw):
     if (valid[0]==False):
         sg.popup('Su tarjeta fue rechazada')
         return
+    
+    if(len(asientos) > 8):
+        sg.popup('Seleccionó más asientos de los permitidos. Intente otra vez')
+        return
 
     try:
         db = sql_conn.connect(user = 'cliente_teatro', password = 'cliente123', host = 'localhost', database = 'progra2')
         cursor = db.cursor()
 
-        cursor.callproc('sp_read_asientos_disponibles', [titulo, fecha, bloque])
+        params = [a for a in asientos]
+
+        for i in range(8-len(asientos)):
+            params += [None]
+
+        params += [titulo, bloque, fila, fecha, nombre, total, valid[1], valid[2]]    
+        cursor.callproc('sp_trn_comprar_tiquete', params)
 
         print_factura(titulo, fecha, bloque, fila, asientos, nombre, total, valid[1], valid[2])
 
     except (sql_conn.Error) as e:
         if (e.errno == 1292):
             sg.popup("Formato incorrecto para fecha\naaaa-mm-dd hh:mm:ss")
+        elif (e.errno == 1644):
+            sg.popup("Alguno de los asientos que eligió no está disponible")
         else:
             print(e)
+    except TypeError as e2:
+        print(e2)
+        sg.popup('Hay un problema con el formato de sus datos')
     finally:
         db.commit()
         cursor.close()
@@ -230,6 +249,58 @@ def vender_entradas_agente(values, usr, passw):
     bloque = values['gbl2e']
     fila = values['gfe']
     pago = values['gpge']
-    nums = [int(i) for i in values['gne'].replace(" ", "").split(",")]
-    sg.popup('vender_entradas_agente')
-    
+    asientos = [int(i) for i in values['gne'].replace(" ", "").split(",")]
+
+    nombre = values['gnome']
+    tarjeta = values['gtare']
+    expiracion = values['gexte']
+    cvv = values['gcte']
+    monto = get_precio_bloque(titulo, fecha, bloque)
+    total = monto * len(asientos)
+
+    if(len(asientos) > 8):
+        sg.popup('Seleccionó más asientos de los permitidos. Intente otra vez')
+        return
+
+    if pago == 'Tarjeta': 
+        tarjeta = int(tarjeta)
+        cvv = int(cvv)
+        valid = validar_transaccion(nombre, tarjeta, expiracion, cvv, monto)
+        if (valid[0]==False):
+            sg.popup('Su tarjeta fue rechazada')
+            return
+    elif pago == 'Efectivo':
+        valid = (True, 0, datetime.today().strftime('%Y-%m-%d %H:%M:%S'))
+        tarjeta = None
+        cvv = None
+
+
+    try:
+        db = sql_conn.connect(user = usr, password = passw, host = 'localhost', database = 'progra2')
+        cursor = db.cursor()
+
+        params = [a for a in asientos]
+
+        for i in range(8-len(asientos)):
+            params += [None]
+
+        params += [titulo, bloque, fila, fecha, nombre, total, valid[1], valid[2]]    
+        cursor.callproc('sp_trn_comprar_tiquete', params)
+
+        print_factura(titulo, fecha, bloque, fila, asientos, nombre, total, valid[1], valid[2])
+
+    except (sql_conn.Error) as e:
+        if (e.errno == 1292):
+            sg.popup("Formato incorrecto para fecha\naaaa-mm-dd hh:mm:ss")
+        elif (e.errno == 1644):
+            sg.popup("Alguno de los asientos que eligió no está disponible")
+        else:
+            print(e)
+    except TypeError as e2:
+        print(e2)
+        sg.popup('Hay un problema con el formato de los datos')
+    finally:
+        db.commit()
+        cursor.close()
+        db.close()
+
