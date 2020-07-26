@@ -17,9 +17,4 @@ CREATE USER 'cliente_teatro'@'localhost' IDENTIFIED BY 'cliente123';
 GRANT 'cliente'@'localhost' TO 'cliente_teatro'@'localhost';
 SET DEFAULT ROLE ALL TO 'cliente_teatro'@'localhost';
 
-/*
-DROP USER IF EXISTS 'juancho'@'localhost';
-CREATE USER 'juancho'@'localhost' IDENTIFIED BY '12';
-GRANT 'admin_teatro'@'localhost' TO 'juancho'@'localhost';
-SET DEFAULT ROLE ALL TO 'juancho'@'localhost';
-*/
+-- Error Code: 1147. There is no such grant defined for user 'admin_sistema' on host 'localhost' on table 'usuario'

@@ -18,7 +18,6 @@ def crear_teatro(values, usr, passw):
     boleteria = values['stelbe']
     email = values['seme']
     capacidad = values['scape']
-    print([nombre, Decimal(telefono), website, Decimal(boleteria), email, Decimal(capacidad)])
 
     try:
         db = sql_conn.connect(user = usr, password = passw, host = 'localhost', database = 'progra2')

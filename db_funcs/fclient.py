@@ -105,7 +105,7 @@ def validar_transaccion(nombre, num_tarjeta, exp, cvv, monto):
     if ((cvv+floor(monto)) % 2 != 0):
         fecha = datetime.today().strftime('%Y-%m-%d %H:%M:%S')
         return (True, randint(100000, 999999), fecha)
-    return (False)
+    return (False,0,0)
 
 
 def consultar_cartelera_cliente(values, usr, passw):
@@ -157,7 +157,7 @@ def comprar_entradas_cliente(values, usr, passw):
     asientos = [int(i) for i in values['pne'].replace(" ", "").split(",")]
 
     nombre = values['pnome']
-    tarjeta = int(values['ptare'])
+    tarjeta = values['ptare']
     expiracion = values['pexte']
     cvv = int(values['pcte'])
     monto = get_precio_bloque(titulo, fecha, bloque)
@@ -263,7 +263,7 @@ def vender_entradas_agente(values, usr, passw):
         return
 
     if pago == 'Tarjeta': 
-        tarjeta = int(tarjeta)
+        tarjeta = tarjeta
         cvv = int(cvv)
         valid = validar_transaccion(nombre, tarjeta, expiracion, cvv, monto)
         if (valid[0]==False):
